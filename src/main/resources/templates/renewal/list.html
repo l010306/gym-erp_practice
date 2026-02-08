@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title th:text="${pageTitle}">续费管理</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-approve {
+            background-color: #4CAF50;
+        }
+
+        .btn-revoke {
+            background-color: #d9534f;
+        }
+
+        .nav-links {
+            margin-bottom: 20px;
+        }
+
+        .nav-links a {
+            margin-right: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="nav-links">
+        <a href="/renewals/pending">待审批列表</a>
+        <a href="/renewals/history">已审批历史</a>
+        <a href="/renewals/create">提交新申请 (前台)</a>
+        <a href="/employees/change-password" style="float: right;">修改密码</a>
+    </div>
+
+    <h1 th:text="${pageTitle}">列表</h1>
+
+    <div th:if="${error}"
+        style="color: red; background-color: #ffdce0; padding: 10px; margin-bottom: 20px; border: 1px solid red;">
+        <span th:text="${error}">错误信息</span>
+    </div>
+
+    <div th:if="${logs.empty}">
+        <p>目前没有记录。</p>
+    </div>
+
+    <table th:unless="${logs.empty}">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>会员卡ID</th>
+                <th>原有效期</th>
+                <th>新有效期</th>
+                <th>申请人ID</th>
+                <th>状态</th>
+                <th>提交时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="log : ${logs}">
+                <td th:text="${log.id}">1</td>
+                <td th:text="${log.cardId}">101</td>
+                <td th:text="${log.oldExpireDate}">2023-12-31</td>
+                <td th:text="${log.newExpireDate}">2024-12-31</td>
+                <td th:text="${log.requesterId}">5</td>
+                <td th:text="${log.status}">PENDING</td>
+                <td th:text="${log.createdAt}">2024-01-23 10:00</td>
+                <td>
+                    <!-- 待审批 -> 显示通过按钮 -->
+                    <form th:if="${log.status == 'PENDING'}" th:action="@{/renewals/{id}/approve(id=${log.id})}"
+                        method="post">
+                        <!-- 模拟当前经理ID为 3 (假设数据库中有 ID=3 的经理且密码为 123456) -->
+                        <input type="hidden" name="approverId" value="3" />
+                        <input th:if="${showPassword}" type="password" name="password" placeholder="经理密码" required
+                            style="width: 80px;" />
+                        <button type="submit" class="btn btn-approve">通过</button>
+                    </form>
+
+                    <!-- 已审批 -> 显示撤销按钮 -->
+                    <form th:if="${log.status == 'APPROVED'}" th:action="@{/renewals/{id}/revoke(id=${log.id})}"
+                        method="post">
+                        <input type="hidden" name="approverId" value="3" />
+                        <input th:if="${showPassword}" type="password" name="password" placeholder="经理密码" required
+                            style="width: 80px;" />
+                        <button type="submit" class="btn btn-revoke">撤销</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+
+</html>

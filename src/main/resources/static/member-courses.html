@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课程预约 - 会员中心</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --bg-dark: #0f172a;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(102, 126, 234, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(118, 75, 162, 0.15) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .member-info {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .member-id-input {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .member-id-input input {
+            padding: 0.75rem 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            width: 200px;
+        }
+
+        .member-id-input input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .course-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .tab.active {
+            color: var(--text-primary);
+            border-bottom-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .course-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .course-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .course-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .course-type-badge {
+            display: inline-block;
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+        }
+
+        .badge-group {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-personal {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .course-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            min-height: 3em;
+        }
+
+        .course-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            padding: 1.25rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .detail-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+            min-width: 80px;
+        }
+
+        .detail-value {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .capacity-bar {
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .capacity-progress {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .capacity-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success) 0%, var(--info) 100%);
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .capacity-full {
+            background: linear-gradient(90deg, var(--danger) 0%, var(--warning) 100%);
+        }
+
+        .capacity-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .price-tag {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--success);
+            margin: 1rem 0;
+        }
+
+        .booking-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .status-available {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .status-full {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .status-past {
+            background: rgba(148, 163, 184, 0.2);
+            color: var(--text-secondary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 5rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.3;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: var(--shadow);
+            animation: modalSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .modal-message {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .member-info {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .member-id-input {
+                flex-direction: column;
+            }
+
+            .member-id-input input {
+                width: 100%;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 课程预约中心</h1>
+            <p class="subtitle">浏览精彩课程，立即预约</p>
+        </header>
+
+        <div class="member-info">
+            <div class="member-id-input">
+                <label for="memberId" style="font-weight: 600;">会员ID:</label>
+                <input type="number" id="memberId" placeholder="请输入您的会员ID" value="1">
+            </div>
+            <button class="btn btn-primary" onclick="viewMyBookings()">📋 我的预约</button>
+        </div>
+
+        <div class="course-tabs">
+            <button class="tab active" onclick="switchTab('ALL')" id="tab-all">🎯 全部课程</button>
+            <button class="tab" onclick="switchTab('GROUP')" id="tab-group">🧘 团课</button>
+            <button class="tab" onclick="switchTab('PERSONAL')" id="tab-personal">💪 私教</button>
+        </div>
+
+        <div id="coursesContainer"></div>
+    </div>
+
+    <!-- 预约成功模态框 -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon">✅</div>
+            <h2 class="modal-title">预约成功！</h2>
+            <p class="modal-message">您的课程已成功预约，请准时参加</p>
+            <button class="btn btn-primary" onclick="closeModal()">确定</button>
+        </div>
+    </div>
+
+    <!-- 错误模态框 -->
+    <div id="errorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon">❌</div>
+            <h2 class="modal-title">预约失败</h2>
+            <p class="modal-message" id="errorMessage">发生错误，请稍后重试</p>
+            <button class="btn btn-primary" onclick="closeModal()">确定</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/courses';
+        let currentCourseType = 'ALL'; // ALL, GROUP, or PERSONAL
+
+        // 页面加载时获取课程
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCourses();
+        });
+
+        // 切换标签
+        function switchTab(type) {
+            currentCourseType = type;
+
+            // 更新标签样式
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(`tab-${type.toLowerCase()}`).classList.add('active');
+
+            // 重新加载课程
+            loadCourses();
+        }
+
+        // 加载所有课程
+        async function loadCourses() {
+            const container = document.getElementById('coursesContainer');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>加载课程中...</p></div>';
+
+            const memberId = document.getElementById('memberId').value;
+            if (!memberId) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">⚠️</div>
+                        <h2>请输入会员ID</h2>
+                        <p>需要会员ID才能查看课程</p>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                // 使用新的会员专属API
+                let url = `${API_BASE}/member/${memberId}`;
+                if (currentCourseType !== 'ALL') {
+                    url += `?type=${currentCourseType}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('API请求失败');
+                }
+                const courses = await response.json();
+
+                if (courses.length === 0) {
+                    const typeText = currentCourseType === 'ALL' ? '' :
+                        currentCourseType === 'GROUP' ? '团课' : '私教';
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📭</div>
+                            <h2>暂无${typeText}课程</h2>
+                            <p>您所在门店暂时没有${typeText}可预约</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // 获取每个课程的预约信息
+                const coursesWithBookings = await Promise.all(
+                    courses.map(async (course) => {
+                        try {
+                            const bookingResponse = await fetch(`${API_BASE}/${course.id}/bookings`);
+                            const bookingInfo = await bookingResponse.json();
+                            return { ...course, bookingInfo };
+                        } catch {
+                            return { ...course, bookingInfo: { bookedCount: 0, availableSlots: course.maxCapacity } };
+                        }
+                    })
+                );
+
+                container.innerHTML = '<div class="courses-grid">' +
+                    coursesWithBookings.map(course => renderCourseCard(course)).join('') +
+                    '</div>';
+            } catch (error) {
+                console.error('加载课程失败:', error);
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">❌</div>
+                        <h2>加载失败</h2>
+                        <p>${error.message || '请检查网络连接后重试'}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 渲染课程卡片
+        function renderCourseCard(course) {
+            const now = new Date();
+            const startTime = new Date(course.startTime);
+            const isPast = startTime < now;
+            const isFull = course.bookingInfo.availableSlots <= 0;
+            const bookedPercent = (course.bookingInfo.bookedCount / course.maxCapacity) * 100;
+
+            let status = '';
+            let statusClass = '';
+            let bookingDisabled = '';
+
+            if (isPast) {
+                status = '已结束';
+                statusClass = 'status-past';
+                bookingDisabled = 'disabled';
+            } else if (isFull) {
+                status = '已满员';
+                statusClass = 'status-full';
+                bookingDisabled = 'disabled';
+            } else {
+                status = '可预约';
+                statusClass = 'status-available';
+            }
+
+            return `
+                <div class="course-card">
+                    <h3 class="course-title">${course.name}</h3>
+                    <span class="course-type-badge badge-${(course.type || 'GROUP').toLowerCase()}">${(course.type || 'GROUP') === 'GROUP' ? '🧘 团课' : '💪 私教'}</span>
+                    <p class="course-description">${course.description || '精彩课程，等你来体验'}</p>
+                    
+                    <div class="course-details">
+                        <div class="detail-row">
+                            <span class="detail-icon">📅</span>
+                            <span class="detail-label">开始时间</span>
+                            <span class="detail-value">${formatDateTime(course.startTime)}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-icon">⏰</span>
+                            <span class="detail-label">结束时间</span>
+                            <span class="detail-value">${formatDateTime(course.endTime)}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-icon">👥</span>
+                            <span class="detail-label">课程容量</span>
+                            <span class="detail-value">${course.maxCapacity} 人</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-icon">👨‍🏫</span>
+                            <span class="detail-label">教练</span>
+                            <span class="detail-value">${course.coach ? course.coach.name : '未指定'}</span>
+                        </div>
+                    </div>
+
+                    <div class="capacity-bar">
+                        <div class="capacity-progress">
+                            <div class="capacity-fill ${isFull ? 'capacity-full' : ''}" style="width: ${bookedPercent}%"></div>
+                        </div>
+                        <div class="capacity-text">
+                            <span>已预约: ${course.bookingInfo.bookedCount}</span>
+                            <span>剩余: ${course.bookingInfo.availableSlots}</span>
+                        </div>
+                    </div>
+
+                    <div class="booking-section">
+                        <div class="status-badge ${statusClass}">${status}</div>
+                        <button class="btn btn-success" style="width: 100%;" onclick="bookCourse(${course.id})" ${bookingDisabled}>
+                            ${isPast ? '⏱️ 课程已结束' : isFull ? '😔 已满员' : '🎯 立即预约'}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 预约课程
+        async function bookCourse(courseId) {
+            const memberId = document.getElementById('memberId').value;
+
+            if (!memberId) {
+                showError('请先输入您的会员ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/${courseId}/book?memberId=${memberId}`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showSuccess();
+                    setTimeout(() => {
+                        loadCourses();
+                    }, 1500);
+                } else {
+                    showError(result.error || '预约失败，请稍后重试');
+                }
+            } catch (error) {
+                console.error('预约失败:', error);
+                showError('网络错误，请检查连接后重试');
+            }
+        }
+
+        // 查看我的预约
+        async function viewMyBookings() {
+            const memberId = document.getElementById('memberId').value;
+
+            if (!memberId) {
+                showError('请先输入您的会员ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/bookings/member/${memberId}`);
+                const bookings = await response.json();
+
+                if (bookings.length === 0) {
+                    showError('您还没有任何预约记录');
+                    return;
+                }
+
+                // 简单展示预约数量
+                alert(`您共有 ${bookings.length} 个预约记录`);
+            } catch (error) {
+                console.error('加载预约失败:', error);
+                showError('加载预约记录失败');
+            }
+        }
+
+        // 显示成功模态框
+        function showSuccess() {
+            document.getElementById('successModal').classList.add('active');
+        }
+
+        // 显示错误模态框
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorModal').classList.add('active');
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('active');
+            });
+        }
+
+        // 格式化日期时间
+        function formatDateTime(dateTimeStr) {
+            const date = new Date(dateTimeStr);
+            return date.toLocaleString('zh-CN', {
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // 点击模态框外部关闭
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal')) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

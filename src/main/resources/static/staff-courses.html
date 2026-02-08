@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课程管理系统 - 前台员工</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-dark: #5568d3;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(102, 126, 234, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(118, 75, 162, 0.1) 0px, transparent 50%);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.875rem 1.75rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .course-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .course-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .course-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .course-type {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .type-group {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .type-personal {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .course-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .info-row strong {
+            color: var(--text-primary);
+        }
+
+        .course-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            color: var(--text-primary);
+            transform: rotate(90deg);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.875rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 课程管理系统</h1>
+            <p class="subtitle">Create and manage fitness courses</p>
+        </header>
+
+        <!-- 员工登录区域 -->
+        <div class="employee-section"
+            style="background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <label for="employeeId" style="font-weight: 600;">员工ID:</label>
+                <input type="number" id="employeeId" placeholder="请输入您的员工ID" value="1"
+                    style="padding: 0.75rem 1rem; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: inherit; width: 150px;">
+                <label for="employeePassword" style="font-weight: 600;">密码:</label>
+                <input type="password" id="employeePassword" placeholder="请输入密码"
+                    style="padding: 0.75rem 1rem; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: inherit; width: 150px;">
+                <button class="btn btn-primary" onclick="loadEmployeeInfo()">🔐 登录</button>
+            </div>
+            <div id="employeeInfo" style="display: none;">
+                <span id="employeeName" style="color: #10b981; font-weight: 600; margin-right: 1rem;"></span>
+                <span id="employeeBranch" style="color: #667eea; font-weight: 600;"></span>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary" onclick="openAddModal()">
+                ➕ 添加新课程
+            </button>
+            <button class="btn btn-secondary" onclick="loadCourses()">
+                🔄 刷新列表
+            </button>
+        </div>
+
+        <div id="coursesContainer" class="courses-grid"></div>
+    </div>
+
+    <!-- 添加/编辑课程模态框 -->
+    <div id="courseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">添加新课程</h2>
+                <button class="close-btn" onclick="closeModal()">✕</button>
+            </div>
+            <form id="courseForm" onsubmit="saveCourse(event)">
+                <input type="hidden" id="courseId">
+
+                <div class="form-group">
+                    <label for="courseName">课程名称 *</label>
+                    <select id="courseName" required>
+                        <option value="BODYPUMP">BODYPUMP</option>
+                        <option value="BODYCOMBAT">BODYCOMBAT</option>
+                        <option value="HIIT">HIIT</option>
+                        <option value="瑜伽">瑜伽</option>
+                        <option value="普拉提">普拉提</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="courseDescription">课程介绍</label>
+                    <textarea id="courseDescription" placeholder="简要介绍课程内容和特点"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="courseType">课程类型 *</label>
+                        <select id="courseType" required>
+                            <option value="GROUP">团课</option>
+                            <option value="PERSONAL">私教一对一</option>
+                        </select>
+                    </div>
+
+                    <!-- Price field removed -->
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="courseStartTime">开始时间 *</label>
+                        <input type="datetime-local" id="courseStartTime" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="courseEndTime">结束时间 *</label>
+                        <input type="datetime-local" id="courseEndTime" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="courseCapacity">最大容量 *</label>
+                        <input type="number" id="courseCapacity" required placeholder="1" min="1">
+                    </div>
+                </div>
+
+                <!-- Branch ID handled automatically (hidden) -->
+
+                <div class="form-group">
+                    <label for="courseCoach">选择教练 *</label>
+                    <select id="courseCoach" required>
+                        <option value="">-- 请选择教练 --</option>
+                        <!-- Options loaded dynamically based on branch -->
+                    </select>
+                </div>
+
+                <!-- Employee ID is strictly handled by backend via session/login context -->
+
+                <div class="form-row">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">保存课程</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/courses';
+        let currentEditId = null;
+        let currentEmployee = null;
+
+        // 页面加载时获取课程列表
+        document.addEventListener('DOMContentLoaded', () => {
+            // 不自动加载课程，等待员工登录
+        });
+
+        // 员工登录
+        async function loadEmployeeInfo() {
+            const employeeId = document.getElementById('employeeId').value;
+            const password = document.getElementById('employeePassword').value;
+
+            if (!employeeId || !password) {
+                alert('请输入员工ID和密码');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/employees/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        employeeId: employeeId,
+                        password: password
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || '登录失败');
+                }
+
+                currentEmployee = await response.json();
+
+                // 显示员工信息
+                document.getElementById('employeeName').textContent = `👤 ${currentEmployee.name}`;
+                document.getElementById('employeeBranch').textContent = `🏢 门店${currentEmployee.branchId}`;
+                document.getElementById('employeeInfo').style.display = 'flex';
+
+                // 隐藏登录输入框 (可选，为了更好体验可以保留以便切换账号，这里保留但清空密码)
+                document.getElementById('employeePassword').value = '';
+
+                // 加载该员工门店的课程
+                loadCourses();
+
+                alert('登录成功！');
+            } catch (error) {
+                console.error('登录失败:', error);
+                alert('登录失败：' + error.message);
+                currentEmployee = null;
+                document.getElementById('employeeInfo').style.display = 'none';
+                document.getElementById('coursesContainer').innerHTML = '';
+            }
+        }
+
+        // 加载教练列表
+        async function loadCoaches(branchId) {
+            try {
+                const response = await fetch(`/api/coaches?branchId=${branchId}`);
+                if (!response.ok) {
+                    throw new Error('加载教练列表失败');
+                }
+                const coaches = await response.json();
+
+                const coachSelect = document.getElementById('courseCoach');
+                coachSelect.innerHTML = '<option value="">-- 请选择教练 --</option>';
+
+                coaches.forEach(coach => {
+                    const option = document.createElement('option');
+                    option.value = coach.id;
+                    option.textContent = coach.name;
+                    coachSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('加载教练列表失败:', error);
+                alert('加载教练列表失败，请稍后重试');
+            }
+        }
+
+        // 加载课程（筛选当前员工门店）
+        async function loadCourses() {
+            if (!currentEmployee) {
+                alert('请先登录');
+                return;
+            }
+
+            try {
+                const response = await fetch(API_BASE);
+                const allCourses = await response.json();
+
+                // 筛选本门店的课程
+                const courses = allCourses.filter(c => c.branchId === currentEmployee.branchId);
+
+                const container = document.getElementById('coursesContainer');
+
+                if (courses.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            <h3>暂无课程</h3>
+                            <p>点击"添加新课程"创建第一个课程</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = courses.map(course => {
+                    const courseType = course.type || 'GROUP'; // 默认为团课
+                    return `
+                    <div class="course-card">
+                        <div class="course-header">
+                            <div>
+                                <h3 class="course-title">${course.name}</h3>
+                                <span class="course-type type-${courseType.toLowerCase()}">${courseType === 'GROUP' ? '团课' : '私教'}</span>
+                            </div>
+                        </div>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">${course.description || '暂无介绍'}</p>
+                        <div class="course-info">
+                            <div class="info-row">
+                                <span>🕐</span>
+                                <span><strong>开始:</strong> ${formatDateTime(course.startTime)}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>🕐</span>
+                                <span><strong>结束:</strong> ${formatDateTime(course.endTime)}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>👥</span>
+                                <span><strong>容量:</strong> ${course.maxCapacity} 人</span>
+                            </div>
+                            <div class="info-row">
+                                <span>👨‍🏫</span>
+                                <span><strong>教练:</strong> ${course.coach ? course.coach.name : '未指定'}</span>
+                            </div>
+                        </div>
+                        <div class="course-actions">
+                            <button class="btn btn-secondary btn-small" onclick="editCourse(${course.id})">✏️ 编辑</button>
+                            <button class="btn btn-danger btn-small" onclick="deleteCourse(${course.id})">🗑️ 删除</button>
+                        </div>
+                    </div>
+                `}).join('');
+            } catch (error) {
+                console.error('加载课程失败:', error);
+                alert('加载课程列表失败，请稍后重试');
+            }
+        }
+
+        // 打开添加模态框
+        function openAddModal() {
+            if (!currentEmployee) {
+                alert('请先登录');
+                return;
+            }
+
+            currentEditId = null;
+            document.getElementById('modalTitle').textContent = '添加新课程';
+            document.getElementById('courseForm').reset();
+            document.getElementById('courseId').value = '';
+
+            // Load coaches for current branch
+            loadCoaches(currentEmployee.branchId);
+
+            document.getElementById('courseModal').classList.add('active');
+        }
+
+        // 编辑课程
+        async function editCourse(id) {
+            try {
+                const response = await fetch(`${API_BASE}/${id}`);
+                const course = await response.json();
+
+                currentEditId = id;
+                document.getElementById('modalTitle').textContent = '编辑课程';
+                document.getElementById('courseId').value = id;
+                document.getElementById('courseName').value = course.name;
+                document.getElementById('courseDescription').value = course.description || '';
+                document.getElementById('courseType').value = course.type;
+                document.getElementById('courseStartTime').value = formatDateTimeInput(course.startTime);
+                document.getElementById('courseEndTime').value = formatDateTimeInput(course.endTime);
+                document.getElementById('courseCapacity').value = course.maxCapacity;
+
+                // Load coaches for the course's branch
+                loadCoaches(course.branchId).then(() => {
+                    document.getElementById('courseCoach').value = course.coach ? course.coach.id : '';
+                });
+                // 移除手动输入员工ID的需求，使用当前登录员工
+                // document.getElementById('courseEmployee').value = course.createdBy ? course.createdBy.id : '';
+
+                document.getElementById('courseModal').classList.add('active');
+            } catch (error) {
+                console.error('加载课程详情失败:', error);
+                alert('加载课程详情失败');
+            }
+        }
+
+        // 保存课程
+        async function saveCourse(event) {
+            event.preventDefault();
+
+            if (!currentEmployee) {
+                alert('请先登录');
+                return;
+            }
+
+            const courseData = {
+                name: document.getElementById('courseName').value,
+                description: document.getElementById('courseDescription').value,
+                type: document.getElementById('courseType').value,
+                startTime: document.getElementById('courseStartTime').value,
+                endTime: document.getElementById('courseEndTime').value,
+                maxCapacity: parseInt(document.getElementById('courseCapacity').value),
+                branchId: currentEmployee.branchId,
+                coach: { id: parseInt(document.getElementById('courseCoach').value) }
+            };
+
+            const employeeId = currentEmployee.id;
+
+            try {
+                let response;
+                if (currentEditId) {
+                    // 更新课程，传递employeeId
+                    response = await fetch(`${API_BASE}/${currentEditId}?employeeId=${employeeId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(courseData)
+                    });
+                } else {
+                    // 创建课程
+                    response = await fetch(`${API_BASE}?employeeId=${employeeId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(courseData)
+                    });
+                }
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || '保存失败');
+                }
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(currentEditId ? '课程更新成功！' : '课程创建成功！');
+                    closeModal();
+                    loadCourses();
+                } else {
+                    alert(result.error || '保存失败');
+                }
+            } catch (error) {
+                console.error('保存课程失败:', error);
+                alert('保存课程失败：' + error.message);
+            }
+        }
+
+        // 删除课程
+        async function deleteCourse(id) {
+            if (!currentEmployee) {
+                alert('请先登录');
+                return;
+            }
+
+            if (!confirm('确定要删除这个课程吗？')) return;
+
+            const employeeId = currentEmployee.id;
+
+            try {
+                const response = await fetch(`${API_BASE}/${id}?employeeId=${employeeId}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || '删除失败');
+                }
+
+                alert('课程删除成功！');
+                loadCourses();
+            } catch (error) {
+                console.error('删除课程失败:', error);
+                alert('删除失败：' + error.message);
+            }
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('courseModal').classList.remove('active');
+        }
+
+        // 格式化日期时间显示
+        function formatDateTime(dateTimeStr) {
+            const date = new Date(dateTimeStr);
+            return date.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // 格式化日期时间为 input 格式
+        function formatDateTimeInput(dateTimeStr) {
+            const date = new Date(dateTimeStr);
+            return date.toISOString().slice(0, 16);
+        }
+
+        // 点击模态框外部关闭
+        document.getElementById('courseModal').addEventListener('click', (e) => {
+            if (e.target.id === 'courseModal') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,15 @@
+spring.application.name=gym-erp
+
+# 数据库配置（本地开发环境）
+# 请根据你的实际环境修改以下配置
+spring.datasource.url=jdbc:postgresql://localhost:5432/gym_erp
+spring.datasource.username=postgres
+spring.datasource.password=your_password_here
+
+# JPA 配置
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+
+# 服务器端口（可选，默认 8080）
+# server.port=8080
