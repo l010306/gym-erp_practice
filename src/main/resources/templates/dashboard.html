@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>店面管理中心 | Gym ERP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --accent-primary: #38bdf8;
+            --accent-secondary: #818cf8;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(129, 140, 248, 0.15) 0%, transparent 40%);
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--glass-border);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-item {
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            transform: translateX(5px);
+        }
+
+        .nav-divider {
+            margin: 1rem 0;
+            border: none;
+            border-top: 1px solid var(--glass-border);
+            opacity: 0.5;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 2.5rem;
+        }
+
+        .header {
+            margin-bottom: 2.5rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-muted);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem;
+            border-radius: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-secondary);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+            color: var(--accent-primary);
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Quick Actions */
+        .section-title {
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .action-card {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(129, 140, 248, 0.1));
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            border-radius: 24px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card:hover {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(129, 140, 248, 0.2));
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            transform: scale(1.02);
+            border-color: var(--accent-primary);
+        }
+
+        .action-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--accent-primary);
+        }
+
+        .action-card p {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .icon-box {
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            font-size: 5rem;
+            opacity: 0.1;
+            transform: rotate(-15deg);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 0; display: none; }
+            .main-content { margin-left: 0; padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">GYM ERP PRO</div>
+        <ul class="nav-links">
+            <li><a href="/" class="nav-item active">🏠 总览看板</a></li>
+            <li><a href="/members/view/register" class="nav-item">👤 会员注册</a></li>
+            <li><a href="/renewals/pending" class="nav-item">💳 会员续费</a></li>
+            <li><a href="/staff-courses.html" class="nav-item">📚 课程管理</a></li>
+            <li><a href="/admin/data" class="nav-item">⚙️ 数据管理中心</a></li>
+            <li><a href="/h2-console" class="nav-item" target="_blank">🛠️ 数据库控制台</a></li>
+            <hr class="nav-divider">
+            <li><a href="/coach-calendar.html" class="nav-item">📅 教练日历（bata）</a></li>
+            <li><a href="/member-courses.html" class="nav-item">🎟️ 课程预约（bata）</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>欢迎回来, 管理员</h1>
+            <p>这是您今天的店面经营概况</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">总会员数</div>
+                <div class="stat-value" th:text="${totalMembers}">1,280</div>
+                <div class="stat-label" style="font-size: 0.75rem; color: #22c55e;">▲ 12% 较上周</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">待处理续费</div>
+                <div class="stat-value" th:text="${pendingRenewals}" style="color: #fbbf24;">5</div>
+                <div class="stat-label" style="font-size: 0.75rem; color: #f87171;">需要尽快处理</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">今日课程</div>
+                <div class="stat-value" th:text="${totalCourses}" style="color: var(--accent-secondary);">24</div>
+                <div class="stat-label" style="font-size: 0.75rem;">正常运行中</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">快速操作入口</h2>
+        <div class="actions-grid">
+            <a href="/members/view/register" class="action-card">
+                <h3>👤 会员注册</h3>
+                <p>快速办理新会员入会，录入基础身高体重信息，建立健康档案。</p>
+                <div class="icon-box">👤</div>
+            </a>
+            <a href="/renewals/create" class="action-card">
+                <h3>💳 会员续费</h3>
+                <p>为会员办理延期或套餐升级，实时录入系统并提交审批流。</p>
+                <div class="icon-box">💳</div>
+            </a>
+            <a href="/member-courses.html" class="action-card">
+                <h3>🎟️ 课程预约（bata）</h3>
+                <p>查看并管理教练的授课计划，帮助会员预约或取消私教课程。</p>
+                <div class="icon-box">🎟️</div>
+            </a>
+            <a href="/admin/data" class="action-card">
+                <h3>⚙️ 数据管理中心</h3>
+                <p>直接管理会员、员工及课程底层数据，快速填充测试样本。</p>
+                <div class="icon-box">⚙️</div>
+            </a>
+        </div>
+    </div>
+
+    <!-- 弹窗通知 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:if="${param.registered}">
+        Swal.fire({
+            title: '注册成功！',
+            text: '新会员已成功录入系统并建立了健康档案。',
+            icon: 'success',
+            background: '#1e293b',
+            color: '#f1f5f9',
+            confirmButtonColor: '#38bdf8'
+        });
+    </script>
+</body>
+</html>

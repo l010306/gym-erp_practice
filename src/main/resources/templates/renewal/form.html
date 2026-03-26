@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提交续费申请 | Gym ERP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --accent-primary: #38bdf8;
+            --accent-success: #22c55e;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: radial-gradient(circle at top right, rgba(56, 189, 248, 0.1), transparent 40%);
+            padding: 1.5rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .header { text-align: center; margin-bottom: 2.5rem; }
+        .header h1 { font-size: 1.75rem; color: var(--accent-primary); margin-bottom: 0.5rem; }
+        .header p { color: var(--text-muted); font-size: 0.9rem; }
+
+        .form-group { margin-bottom: 1.75rem; }
+        label { display: block; margin-bottom: 0.75rem; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+        
+        input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 1rem;
+            border-radius: 12px;
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            background: var(--accent-primary);
+            color: var(--bg-color);
+            border: none;
+            padding: 1.1rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(56, 189, 248, 0.3); }
+
+        .success-banner {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--accent-success);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            font-weight: 600;
+        }
+
+        .footer-links {
+            margin-top: 2rem;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--accent-primary); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="glass-card">
+            <div class="header">
+                <h1>会员续费办理</h1>
+                <p>提交新的会员卡有效期延长申请</p>
+            </div>
+
+            <div th:if="${param.success}" class="success-banner">
+                ✅ 申请已成功提交至经理审批
+            </div>
+
+            <form action="/renewals/create" method="post">
+                <div class="form-group">
+                    <label for="cardId">会员卡 ID</label>
+                    <input type="number" id="cardId" name="cardId" th:value="${cardId}" placeholder="输入会员卡号" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="monthsToAdd">续费时长 (月)</label>
+                    <input type="number" id="monthsToAdd" name="monthsToAdd" min="1" value="12" required />
+                </div>
+
+                <!-- 模拟当前前台ID为 10 -->
+                <input type="hidden" name="requesterId" value="10" />
+
+                <button type="submit" class="btn">提交申请表单</button>
+            </form>
+
+            <div class="footer-links">
+                <a href="/">返回看板</a>
+                <a href="/renewals/pending">查看待审批</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
